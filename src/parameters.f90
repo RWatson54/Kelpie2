@@ -1,12 +1,12 @@
 !********************************************************************!
 !********************************************************************!
 !                                                                    !
-!   Kelpie -- A refactored Kelpie IBM CFD code                       !
+!   mod_globalParameters -- A module which stores key variables      !
 !                                                                    !
 !********************************************************************!
 !                                                                    !
 !   Version history:                                                 !
-!                    Program created: 20Jan22                - raw54 !
+!                    Program created: 21May21                - raw54 !
 !                                                                    !
 !********************************************************************!
 !                                                                    !
@@ -15,75 +15,57 @@
 !                                                                    !
 !********************************************************************!
 !********************************************************************!
-!
-!>  Doxygen Section:
-!
-!>  @author
+! 
+!   Doxygen section: 
+! 
+!>  @author 
 !>  Rob Watson
-!>
-!>  @brief 
-!>  This version of Kelpie is a structured FV CFD solver, designed to
-!>  be used to carry out immersed boundary investigation of flow 
-!>  through porous media.
-!>
-!*******************************************************************
-!*******************************************************************
+! 
+!>  @brief This module stores variables for easy access by other
+!>         modules, such as filenames, etc.
+! 
+!********************************************************************!
+!********************************************************************!
 
-program Kelpie
+module mod_globalParameters
 
    ! Declare modules
 
    use precision
-   use mod_HelloGoodbye
-   use mod_GlobalParameters
-   use mod_Input
-   use mod_ReadAlloc
-
-   ! Turn off implicit typing
 
    implicit none
 
-   ! Say hello, welcoming everyone to the execution of the run
+   ! First, the variables which are important for the overall calculation
 
-   call hg_Hello()
+   ! Filenames various (read from input.dat)
+   character(len=CP) :: meshFile, flowRestartFile, flowOutputFile, flowInputFile
 
-   ! Read the input file
+   ! Main iteration loop numbers (read from input.dat)
+   integer(kind=WI) :: nInnerIt, nOuterIt
 
-   write(6,*) ' *** '
-   write(6,*) ' *** Reading in the input file...'
+   ! A switch for if we're steady or unsteady (read from input.dat)
+   character(len=CP) :: steadySwitch
 
-   call input_getInput()
+   ! Frequency of write out and number of files (read from input.dat)
+   integer(kind=WI) :: nWriteFreq, nOutputFiles
 
-   write(6,*) ' *** ...done.'
-   write(6,*) ' *** '
+   ! CFL number and real timestep size (read from input.dat)
+   real(kind=WP) :: CFL, dtR
 
-   ! Read in the mesh and flow files, and allocate solution memory
+   ! Set velocity at the inflow from the input file
+   real(kind=WP) :: inflowVel
 
-   write(6,*) ' *** '
-   write(6,*) ' *** Reading in and preparing the mesh and flow...'
-
-   call ra_readalloc()
-
-   write(6,*) ' *** ...done.'
-   write(6,*) ' *** '   
-
-   ! Say goodbye, letting everyone know the dream is over
-
-   call hg_Goodbye()
-
-   ! Stop and exit cleanly
-
-   stop
+   ! Set the number of PDEs
+   integer(kind=WI) :: nPdes
 
 contains
 
-end program Kelpie
+end module mod_globalParameters
 
 !********************************************************************!
 !********************************************************************!
 !                                                                    !
-!   End of program Kelpie                                            !
+!   End of module mod_globalParameters                               !
 !                                                                    !
 !********************************************************************!
 !********************************************************************!
-

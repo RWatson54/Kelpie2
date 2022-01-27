@@ -13,7 +13,7 @@ FC=gfortran
 
 # Set the optimisation and error checking options
 OPTIMISE = -O3
-DEBUGGING = #-g -Wall -Wno-unused-dummy-argument -fcheck=all -pedantic -fbacktrace -Wextra
+DEBUGGING = -g -Wall -Wno-unused-dummy-argument -fcheck=all -pedantic -fbacktrace -Wextra
 INCLUDE = -I$(INC_DIR)
 
 # Bundle these together
@@ -26,18 +26,33 @@ LFLAGS= -L$(LIB_DIR)
 # Set up the list of source code files
 EXEC_FILES = $(SRC_DIR)/precision.f90 \
              $(SRC_DIR)/hello.f90 \
+             $(SRC_DIR)/parameters.f90 \
+             $(SRC_DIR)/input.f90 \
+             $(SRC_DIR)/readalloc.f90 \
              $(SRC_DIR)/main.f90 
 
+MESH_FILES = $(SRC_DIR)/precision.f90 \
+             $(SRC_DIR)/mesh.f90 
+
+
 # Set up the list of object files from the source code files
-OBJ_FILES = $(EXEC_FILES:%.f90=%.o)
+OBJ_FILES1 = $(EXEC_FILES:%.f90=%.o)
+OBJ_FILES2 = $(MESH_FILES:%.f90=%.o)
 
 # Set up the hooks
-all: clean kelpie.exe
+all: clean meshinit.exe kelpie.exe
 
-kelpie.exe: $(OBJ_FILES)
+kelpie.exe: $(OBJ_FILES1)
 	@echo ""
 	@echo "Building Kelpie executable"
-	$(FC) $(FCFLAGS) $(OBJ_FILES) -o $@ $(LFLAGS)
+	$(FC) $(FCFLAGS) $(OBJ_FILES1) -o $@ $(LFLAGS)
+	$(MKDIR) $(BIN_DIR)
+	$(MV) $@ $(BIN_DIR)/$@
+
+meshinit.exe: $(OBJ_FILES2)
+	@echo ""
+	@echo "Building Mesh and initialisation executable"
+	$(FC) $(FCFLAGS) $(OBJ_FILES2) -o $@ $(LFLAGS)
 	$(MKDIR) $(BIN_DIR)
 	$(MV) $@ $(BIN_DIR)/$@
 

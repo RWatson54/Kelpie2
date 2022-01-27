@@ -15,3 +15,7 @@ fort.*
 
 # Ignore useless .dat files
 *.dat
+
+# Ignore plot3d-like files
+*.xyz
+*.q
