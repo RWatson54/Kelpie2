@@ -15,6 +15,7 @@ fort.*
 
 # Ignore useless .dat files
 *.dat
+!input.dat
 
 # Ignore plot3d-like files
 *.xyz
@@ -22,3 +23,6 @@ fort.*
 
 # Ignore any lovely VTU output files
 *.vtu
+
+# Ignore the test directory
+test/
