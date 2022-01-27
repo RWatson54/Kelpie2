@@ -65,9 +65,6 @@ contains
 
       logical           :: fileExists
 
-      ! Set up the number of partial differential equations (from file later)
-      nPdes = 3
-
       ! Test if the input file exists
 
       inquire(file="input.dat", exist=fileExists)
@@ -273,6 +270,10 @@ contains
       return 
 
    end subroutine input_getInput
+
+   !*******************************************************************
+   !*******************************************************************
+
 
 end module mod_Input
 

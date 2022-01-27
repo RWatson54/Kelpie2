@@ -35,6 +35,7 @@ module mod_ReadAlloc
 
    use precision
    use mod_globalParameters
+   use mod_Equations
 
    ! Turn off implicit typing
 
@@ -52,9 +53,21 @@ module mod_ReadAlloc
 
    ! Solution variables
 
-   real   (kind=WP), allocatable :: q(:,:,:,:)
+   real   (kind=WP), allocatable :: q(:,:,:,:), u(:,:,:,:), qp(:,:,:,:,:)
 
-   real   (kind=WP), allocatable :: error(:,:,:,:)
+   real   (kind=WP), allocatable :: ires(:,:,:,:), vres(:,:,:,:), res(:,:,:,:)
+
+   real   (kind=WP), allocatable :: sts(:,:,:,:)
+
+   real   (kind=WP), allocatable :: e(:,:,:,:)
+
+   integer(kind=WI), allocatable :: is(:,:,:,:)
+
+   real   (kind=WP), allocatable :: dt(:,:,:,:)
+
+   ! Helpful hangers-on
+
+   real   (kind=WP), allocatable :: MaxRes(:)
 
    ! Set everything public
 
@@ -193,8 +206,8 @@ contains
 
       ! Allocate memory for the flow primitive variables
 
-      allocate(    q(nPdes,nIc,nJc,nKc))
-      allocate(error(nPdes,nIc,nJc,nKc))
+      allocate(q(nPdes,nIc,nJc,nKc))
+      allocate(e(nPdes,nIc,nJc,nKc))
 
       ! Open the plot3D-like flow file
 
@@ -224,8 +237,8 @@ contains
       
       ! Get the mesh data
 
-      read(191) ((((    q(iPde,i,j,k), i=1, nIc), j=1, nJc), k=1, nKc), iPde = 1, nPdes), &
-                ((((error(iPde,i,j,k), i=1, nIc), j=1, nJc), k=1, nKc), iPde = 1, nPdes) 
+      read(191) ((((q(iPde,i,j,k), i=1, nIc), j=1, nJc), k=1, nKc), iPde = 1, nPdes), &
+                ((((e(iPde,i,j,k), i=1, nIc), j=1, nJc), k=1, nKc), iPde = 1, nPdes) 
 
       if ( endState .lt. 0 ) then
 
@@ -239,6 +252,34 @@ contains
 
       close(191)
 
+      ! Allocate memory for the conserved variables, and populate
+
+      allocate(u(nPdes, nIc, nJc, nKc))
+
+      do k = 1, nKc
+      do j = 1, nJc
+      do i = 1, nIc
+         u(:,i,j,k) = q2u(q(:,i,j,k))
+      end do
+      end do
+      end do
+
+      ! Now allocate other variables that the solution needs, or helpful
+
+      allocate(qp(nPdes, 3, nIc, nJc, nKc))
+
+      allocate(dt(nPdes, nIc, nJc, nKc))
+
+      allocate(ires(nPdes, nIc, nJc, nKc), vres(nPdes, nIc, nJc, nKc))
+
+      allocate(res(nPdes, nIc, nJc, nKc))
+
+      allocate(sts(nPdes, nIc, nJc, nKc))
+      
+      allocate(MaxRes(nPdes))
+
+      allocate(iS(1,nIc, nJc, nKc))
+      
       ! Return to calling subprogram 
 
       return 
@@ -366,9 +407,9 @@ contains
       ! Compute the volume
       
       V = (1.0_wp / 12.0_wp) * & 
-             Triple((x7-x1) + (x6-x0), (x7-x2), (x3-x0)) + &
-             Triple((x6-x0), (x7-x2) + (x5-x0), (x7-x4)) + &
-             Triple((x7-x1), (x5-x0), (x7-x4) + (x3-x0)) 
+          ( Triple((x7-x1) + (x6-x0), (x7-x2), (x3-x0)) + &
+            Triple((x6-x0), (x7-x2) + (x5-x0), (x7-x4)) + &
+            Triple((x7-x1), (x5-x0), (x7-x4) + (x3-x0))  )
 
       ! Return to calling program
 
@@ -464,12 +505,12 @@ contains
 
       ! Compute the normals
 
-      N(:,1) = Cross(x4-x2, x6-x0)
-      N(:,2) = Cross(x7-x1, x5-x3)
-      N(:,3) = Cross(x5-x0, x4-x1)
-      N(:,4) = Cross(x6-x3, x7-x2)
-      N(:,5) = Cross(x2-x1, x3-x0)
-      N(:,6) = Cross(x7-x4, x6-x5)
+      N(:,1) = half * Cross(x4-x2, x6-x0)
+      N(:,2) = half * Cross(x7-x1, x5-x3)
+      N(:,3) = half * Cross(x5-x0, x4-x1)
+      N(:,4) = half * Cross(x6-x3, x7-x2)
+      N(:,5) = half * Cross(x2-x1, x3-x0)
+      N(:,6) = half * Cross(x7-x4, x6-x5)
       
       ! Return to calling program
 

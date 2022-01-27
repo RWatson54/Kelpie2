@@ -55,8 +55,8 @@ module mod_globalParameters
    ! Set velocity at the inflow from the input file
    real(kind=WP) :: inflowVel
 
-   ! Set the number of PDEs
-   integer(kind=WI) :: nPdes
+   ! Store the counters here so that other modules can use them
+   integer(kind=WI) :: iIteration = 0, iRTime = 0, iPTime = 0
 
 contains
 

@@ -19,3 +19,6 @@ fort.*
 # Ignore plot3d-like files
 *.xyz
 *.q
+
+# Ignore any lovely VTU output files
+*.vtu

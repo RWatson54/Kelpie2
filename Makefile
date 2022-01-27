@@ -12,7 +12,7 @@ CC=gcc
 FC=gfortran
 
 # Set the optimisation and error checking options
-OPTIMISE = -O3
+OPTIMISE =  -O3
 DEBUGGING = -g -Wall -Wno-unused-dummy-argument -fcheck=all -pedantic -fbacktrace -Wextra
 INCLUDE = -I$(INC_DIR)
 
@@ -27,8 +27,13 @@ LFLAGS= -L$(LIB_DIR)
 EXEC_FILES = $(SRC_DIR)/precision.f90 \
              $(SRC_DIR)/hello.f90 \
              $(SRC_DIR)/parameters.f90 \
+             $(SRC_DIR)/equations.f90 \
              $(SRC_DIR)/input.f90 \
              $(SRC_DIR)/readalloc.f90 \
+             $(SRC_DIR)/pdesolve.f90 \
+             $(SRC_DIR)/update.f90 \
+             $(SRC_DIR)/ibm.f90 \
+             $(SRC_DIR)/output.f90 \
              $(SRC_DIR)/main.f90 
 
 MESH_FILES = $(SRC_DIR)/precision.f90 \

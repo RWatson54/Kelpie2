@@ -35,7 +35,7 @@ program Write_P3D
 
    ! Flow parameters
 
-   integer(kind=WI), parameter :: nPdes = 3
+   integer(kind=WI), parameter :: nPdes = 4
 
    real   (kind=WP), allocatable :: q(:,:,:,:), e(:,:,:,:)
 
@@ -89,8 +89,8 @@ program Write_P3D
 
    ! Allocate memory for the initial flow
 
-   allocate(q(3,nIc,nJc,nKc))
-   allocate(e(3,nIc,nJc,nKc))
+   allocate(q(nPdes,nIc,nJc,nKc))
+   allocate(e(nPdes,nIc,nJc,nKc))
 
    ! Set up the initial flow, read in from input.dat file if required
 
@@ -100,6 +100,7 @@ program Write_P3D
    q(1,:,:,:) = 100000d0
    q(2,:,:,:) = 5d0
    q(3,:,:,:) = 0d0
+   q(4,:,:,:) = 0d0
 
    e = 0d0
 
