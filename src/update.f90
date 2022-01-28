@@ -87,7 +87,7 @@ contains
       do j = 1, nJc
       do i = 1, nIc
 
-         dx = sqrt(vol(1,i,j,k))
+         dx = (vol(1,i,j,k))**(1.0_wp/3.0_wp)
 
          dt(:,i,j,k) = CFL * lambda(dx, q(:,i,j,k))
 

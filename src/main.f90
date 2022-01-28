@@ -112,12 +112,15 @@ program Kelpie
 
       call update_explicit()
 
-      ! Print progress to screen
+      ! Print a history of the convergence to the screen and to file
 
       call output_hist()
 
-      if ( mod(iRTime, 500) .eq. 0 ) then
+      ! Print the restart file and output file as required
+      
+      if ( mod(iIteration, nWriteFreq) .eq. 0 ) then
          call output_VTU()
+         call output_restart()
       end if
       
    end do
